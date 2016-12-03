@@ -1,0 +1,19 @@
+﻿Build started 2016-11-29 7:09:17 PM.
+     1>Project "C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\ConsoleTester\ConsoleTester.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\\Assignment 4 Native" /I"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\\Assignment 4 Native\glm-0.9.7" /ZI /nologo /W3 /WX- /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt ConsoleTester.cpp stdafx.cpp
+         stdafx.cpp
+         ConsoleTester.cpp
+     1>c:\users\nick\desktop\gamedevelopment\semester5\physics\assignment 4 after demo(1)\assignment 4 0na nick mallory\assignment 4 native\consoletester\consoletester.cpp(40): warning C4996: '_sleep': This function or variable has been superceded by newer library or operating system functionality. Consider using Sleep instead. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdlib.h(1266): note: see declaration of '_sleep'
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\x64\Debug\ConsoleTester.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\x64\Debug\ConsoleTester.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\x64\Debug\ConsoleTester.lib" /MACHINE:X64 x64\Debug\ConsoleTester.obj
+         x64\Debug\stdafx.obj
+         "C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\x64\Debug\NativePhysics.lib"
+         ConsoleTester.vcxproj -> C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\x64\Debug\ConsoleTester.exe
+     1>Done Building Project "C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\Assignment 4 Native\ConsoleTester\ConsoleTester.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.82
