@@ -1,5 +1,6 @@
 #include "World.h"
 #include "Collision.h"
+#include "Face.h"
 
 // PRIVATE
 
@@ -13,109 +14,138 @@ POLYGON_HANDLE World::GeneratePolygonHandle()
 // Handles a single physics step.
 void World::Step( float deltaTimeSeconds )
 {
+	// Clean out collisions from last frame.
 	__collisions.clear();
-	// Check for collisions using SAT algorithm.
-	for ( std::pair<POLYGON_HANDLE, Polygon*> pair : __polygons )
-	{
-		Polygon* aPolygon = pair.second;
 
-		for ( std::pair<POLYGON_HANDLE, Polygon*> pair : __polygons )
+	// Collision detection.
+	for( auto aIterator = __polygons.begin(); aIterator != __polygons.end(); ++aIterator )
+	{
+		Polygon* aPolygon = aIterator->second;
+
+		for( auto bIterator = aIterator; bIterator != __polygons.end(); ++bIterator )
 		{
-			Polygon* bPolygon = pair.second;
+			Polygon* bPolygon = bIterator->second;
 
 			// We don't want to test collisions between this polygon and itself!
-			if ( aPolygon == bPolygon )
+			if( aPolygon == bPolygon )
 			{
 				continue;
 			}
 
-			// Start testing for a collision...
+			// Actually test whether this pair collides and store the collision if so.
 			Collision collision;
-			if (CheckCollision(aPolygon, bPolygon, &collision)) 
+			if( TestCollision( aPolygon, bPolygon, &collision ) )
 			{
-				__collisions.push_back(collision);
+				__collisions.push_back( collision );
 			}
-
 		}
+	}
+
+	// Collision resolution.
+	for( auto collision : __collisions )
+	{
+		// Do something with each collision...
+		// TODO
+		collision.contactPolygon->SetVelocity(-collision.contactPolygon->GetVelocity());
+	}
+
+	// Integrate force -> acceleration -> velocity -> position.
+	for ( auto aIterator = __polygons.begin(); aIterator != __polygons.end(); ++aIterator )
+	{
+		Polygon* aPolygon = aIterator->second;
+
+		// Apply gravity if this polygon is expecting it.
+		if ( aPolygon->GetUseGravity() )
+		{
+			aPolygon->Accelerate( glm::vec2( 0.0f, __gravityAcceleration * deltaTimeSeconds ) );
+		}
+
+		// Maybe here is a good place to account for any forces acting on your polygons...
+		// TODO
+
+		// Integrate velocity to position (Euler method).
+		aPolygon->Translate( aPolygon->GetVelocity() * deltaTimeSeconds );
+
+		// Integrate rotational velocity to rotation (Euler method).
+		aPolygon->Rotate( aPolygon->GetRotationalVelocity() * deltaTimeSeconds );
 	}
 }
 
-bool World::TestSeparatingAxisTheorem(Polygon * facePolygon, Polygon * vertexPolygon, Collision* collision)
+bool World::TestCollision( Polygon* aPolygon, Polygon* bPolygon, Collision* maybeCollision )
 {
-	//For each face in aPolygon's faces
-	for (Face* face : facePolygon->GetFaces())
+	// Test SAT with the faces of aPolygon and the vertices of bPolygon.
+	if( !TestSeparateAxisTheorem( aPolygon, bPolygon, maybeCollision ) )
 	{
+		return false;
+	}
 
-		//Find closest vertex of bPolygon
+	// Test SAT with the faces of bPolygon and the vertices of aPolygon.
+	if( !TestSeparateAxisTheorem( bPolygon, aPolygon, maybeCollision ) )
+	{
+		return false;
+	}
+
+	// If we haven't exited out yet, return the collision object.
+	return true;
+}
+
+bool World::TestSeparateAxisTheorem( Polygon* facePolygon, Polygon* vertexPolygon, Collision* maybeCollision )
+{
+	// For each face in bPolygon
+	for( Face aFace : facePolygon->GetFaces() )
+	{
+		// Find the vertex in bPolygon with the minimum distance from the face.
 		float minDistance = FLT_MAX;
 		glm::vec2 minVertex;
-		for (glm::vec2 vertex : vertexPolygon->GetGlobalVertices())
+		for( glm::vec2 bVertex : vertexPolygon->GetGlobalVertices() )
 		{
-			float newDistance = face->GetDistance(vertex);
-			if (newDistance < minDistance) { // If we found a closer vertex
-				minDistance = newDistance;
-				minVertex = vertex;
+			float distance = aFace.GetGlobalDistance( bVertex );
+			if( distance < minDistance )
+			{
+				minDistance = distance;
+				minVertex = bVertex;
 			}
 		}
-		//If distance > 0 (no collision)
-		if (minDistance > 0) 
+
+		// If the distance to the nearest vertex in b is greater than 0, we can't be in collision.
+		if( minDistance > 0 )
 		{
 			return false;
 		}
-		//If this is the nearest vertex to a face so far
-		if (minDistance > -collision->depth) 
+
+		// The least negative distance is the best candidate for depenetration.
+		if( minDistance > maybeCollision->depth )
 		{
-			collision->aPolygon = facePolygon;
-			collision->bPolygon = vertexPolygon;
-			collision->aNormal = face->GetNormal();
-			collision->aVertex = minVertex;
-			collision->depth = -minDistance;
+			maybeCollision->facePolygon = facePolygon;
+			maybeCollision->contactPolygon = vertexPolygon;
+			maybeCollision->contactVertex = minVertex;
+			maybeCollision->depth = minDistance;
+			maybeCollision->faceNormal = aFace.GetGlobalNormal();
 		}
 	}
+
 	return true;
 }
 
-bool World::CheckCollision(Polygon * _aPolygon, Polygon * _bPolygon, Collision* collision)
-{
-	if (!TestSeparatingAxisTheorem(_aPolygon, _bPolygon, collision)) 
-	{
-		return false;
-	}
-	if (!TestSeparatingAxisTheorem(_bPolygon, _aPolygon, collision)) 
-	{
-		return false;
-	}
-	return true;
-}
+
 
 // PUBLIC
 
-bool World::IsColliding(Polygon * polygon)
-{
-	for (Collision collision : __collisions) 
-	{
-		if (polygon == collision.aPolygon)
-			return true;
-		else if (polygon == collision.bPolygon)
-			return true;
-	}
-	return false;
-}
-
 // Constructor: Defaults a bunch of values on startup.
-World::World( float fixedTimestepSeconds )
+World::World( float fixedTimestepSeconds, float gravityAcceleration )
 	: __accumulatedTimeSeconds( 0.0f )
+	, __gravityAcceleration( gravityAcceleration )
 	, __fixedTimestepSeconds( fixedTimestepSeconds )
 	, __nextHandle( 1 )
 	, __polygons( std::map<POLYGON_HANDLE, Polygon*>() )
 {
-	
+
 }
 
 // Destructor: Doesn't need to do anything.
 World::~World()
 {
-	
+
 }
 
 // Update the World's clock by taking the in deltaTimeSeconds and calling Step() once for each 
@@ -124,7 +154,7 @@ World::~World()
 void World::Update( float deltaTimeSeconds )
 {
 	__accumulatedTimeSeconds += deltaTimeSeconds;
-	while ( __accumulatedTimeSeconds >= __fixedTimestepSeconds )
+	while( __accumulatedTimeSeconds >= __fixedTimestepSeconds )
 	{
 		__accumulatedTimeSeconds -= __fixedTimestepSeconds;
 		Step( __fixedTimestepSeconds );
@@ -134,10 +164,10 @@ void World::Update( float deltaTimeSeconds )
 
 // Create a new Polygon instance and store it in the __polygons map so we can look it up by its
 // handle later.
-POLYGON_HANDLE World::CreatePolygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation )
+POLYGON_HANDLE World::CreatePolygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation, float mass, bool useGravity )
 {
 	auto handle = GeneratePolygonHandle();
-	__polygons.emplace( handle, new Polygon( vertices, position, rotation ) );
+	__polygons.emplace( handle, new Polygon( vertices, position, rotation, mass, useGravity ) );
 	return handle;
 }
 
@@ -152,14 +182,14 @@ void World::DestroyPolygon( POLYGON_HANDLE handle )
 }
 
 // If a Polygon exists at the provided handle, return a reference to it.
-Polygon& World::GetPolygon( POLYGON_HANDLE handle )
+Polygon* World::GetPolygon( POLYGON_HANDLE handle )
 {
 	auto hasHandle = __polygons.count( handle );
-	if ( !hasHandle )
+	if( !hasHandle )
 	{
 		throw std::exception( "No polygon exists at this handle!" );
 	}
-	return *__polygons.at( handle );
+	return __polygons.at( handle );
 }
 
 // Get the current physics clock time. This time exactly reflects the amount of time that the 
@@ -168,4 +198,21 @@ Polygon& World::GetPolygon( POLYGON_HANDLE handle )
 float World::GetCurrentTimeSeconds()
 {
 	return __currentTimeSeconds;
+}
+
+// Check if 2 polygons are intersecting.
+bool World::IsPolygonColliding( Polygon* polygon )
+{
+	for( Collision collision : __collisions )
+	{
+		if( polygon == collision.facePolygon )
+		{
+			return true;
+		}
+		else if( polygon == collision.contactPolygon )
+		{
+			return true;
+		}
+	}
+	return false;
 }

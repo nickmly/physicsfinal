@@ -1,13 +1,18 @@
 #pragma once
-#include "glm.hpp"
+#include <glm.hpp>
+
+class Face;
 class Polygon;
+
 struct Collision
 {
-	Polygon* aPolygon;
-	Polygon* bPolygon;
-	glm::vec2 aNormal;
-	glm::vec2 aVertex;
+	Polygon* facePolygon;
+	Polygon* contactPolygon;
+	glm::vec2 faceNormal;
+	glm::vec2 contactVertex;
 	float depth;
-	Collision();
-};
 
+	Collision();
+
+	float GetAngularMomentum();
+};
