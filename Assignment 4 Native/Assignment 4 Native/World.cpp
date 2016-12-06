@@ -46,7 +46,8 @@ void World::Step( float deltaTimeSeconds )
 	{
 		// Do something with each collision...
 		// TODO
-		collision.contactPolygon->SetVelocity(-collision.contactPolygon->GetVelocity());
+		collision.contactPolygon->SetUseGravity(false);
+		collision.contactPolygon->Accelerate(-collision.contactPolygon->GetVelocity());
 	}
 
 	// Integrate force -> acceleration -> velocity -> position.
