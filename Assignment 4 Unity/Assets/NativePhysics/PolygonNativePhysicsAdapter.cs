@@ -14,6 +14,9 @@ namespace Humber.GAME205.NativePhysics
         public bool useGravity = false;
         public float mass = 1f;
 
+        public float initialRotationalVelocity;
+        public Vector2 initialVelocity;
+
         #region Computed Properties
         public int Handle
         {
@@ -125,6 +128,9 @@ namespace Humber.GAME205.NativePhysics
             Polygon.VerticesChanged.AddListener( () => {
                 World.PolygonSetVertices( handle, Polygon.Vertices );
             } );
+
+            World.PolygonSetVelocity(handle, initialVelocity);
+            world.PolygonSetRotationalVelocity(handle, initialRotationalVelocity);
         }
 
         void OnDestroy()

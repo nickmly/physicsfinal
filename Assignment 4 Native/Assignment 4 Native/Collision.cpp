@@ -38,8 +38,8 @@ float Collision::GetAngularMomentum()
 	float aRotationalInertiaTerm = glm::dot( faceNormal, aInverseRotationalInertia * aRxNxR );
 	float bRotationalInertiaTerm = glm::dot( faceNormal, bInverseRotationalInertia * bRxNxR );
 
-	float numerator = ( relativeVelocityAlongNormal * ( restitution + 1.0f ) );
-	float denominator = ( aInverseMass + bInverseMass + aInverseRotationalInertia + bInverseRotationalInertia );
+	float numerator = -( relativeVelocityAlongNormal * ( restitution + 1.0f ) );
+	float denominator = ( aInverseMass + bInverseMass + aRotationalInertiaTerm + bRotationalInertiaTerm );
 
 	float angularMomentum = numerator / denominator;
 
