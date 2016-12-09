@@ -44,9 +44,25 @@ void World::Step( float deltaTimeSeconds )
 	// Collision resolution.
 	for( auto collision : __collisions )
 	{
-		// Do something with each collision...
-		// TODO
-		collision.contactPolygon->SetVelocity(-collision.contactPolygon->GetVelocity());
+		Polygon* aPolygon = collision.facePolygon;
+		Polygon* bPolygon = collision.contactPolygon;
+
+		glm::vec2 relativeVelocity = bPolygon->GetVelocity() - aPolygon->GetVelocity();
+		float contactVelocity = glm::dot(relativeVelocity, collision.faceNormal);
+
+		if (contactVelocity > 0)
+			break;
+		float restitution = 1.0f;
+
+		float impulseScalar = -(1.0f + restitution) * contactVelocity;
+		float invMassA = 1 / aPolygon->GetMass();
+		float invMassB = 1 / bPolygon->GetMass();
+		impulseScalar /= invMassA + invMassB;
+		glm::vec2 impulse = impulseScalar * collision.faceNormal;
+		
+		//aPolygon->SetVelocity(aPolygon->GetVelocity() - (invMassA * impulse));
+		bPolygon->SetVelocity(bPolygon->GetVelocity() + (invMassB * impulse));
+		//collision.contactPolygon->SetVelocity(-collision.contactPolygon->GetVelocity());
 	}
 
 	// Integrate force -> acceleration -> velocity -> position.

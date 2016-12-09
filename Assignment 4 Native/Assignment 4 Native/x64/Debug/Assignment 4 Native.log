@@ -1,8 +1,8 @@
-﻿Build started 2016-12-06 6:37:11 PM.
+﻿Build started 2016-12-08 7:59:13 PM.
      1>Project "C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\physicsfinal\Assignment 4 Native\Assignment 4 Native\Assignment 4 Native.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I".\glm-0.9.7" /ZI /nologo /W3 /WX- /sdl /Od /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt Collision.cpp
-         Collision.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I".\glm-0.9.7" /ZI /nologo /W3 /WX- /sdl /Od /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt World.cpp
+         World.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\physicsfinal\Assignment 4 Native\x64\Debug\NativePhysics.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\physicsfinal\Assignment 4 Native\x64\Debug\NativePhysics.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nick\Desktop\GameDevelopment\semester5\physics\Assignment 4 After Demo(1)\Assignment 4 0NA Nick Mallory\physicsfinal\Assignment 4 Native\x64\Debug\NativePhysics.lib" /MACHINE:X64 /DLL x64\Debug\Collision.obj
          x64\Debug\Face.obj
@@ -20,4 +20,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.09
+Time Elapsed 00:00:03.32
