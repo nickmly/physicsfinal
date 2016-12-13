@@ -49,9 +49,12 @@ void World::Step( float deltaTimeSeconds )
 
 		glm::vec2 relativeVelocity = bPolygon->GetVelocity() - aPolygon->GetVelocity();
 		float contactVelocity = glm::dot(relativeVelocity, collision.faceNormal);
-
+		//No need to continue if velocities are separating already
 		if (contactVelocity > 0)
 			break;
+
+		//Default restitution is 1.0f
+		//TODO add restitution to polygon
 		float restitution = 1.0f;
 
 		float impulseScalar = -(1.0f + restitution) * contactVelocity;
@@ -62,7 +65,7 @@ void World::Step( float deltaTimeSeconds )
 		
 		//aPolygon->SetVelocity(aPolygon->GetVelocity() - (invMassA * impulse));
 		bPolygon->SetVelocity(bPolygon->GetVelocity() + (invMassB * impulse));
-		//collision.contactPolygon->SetVelocity(-collision.contactPolygon->GetVelocity());
+		bPolygon->Rotate(-collision.GetAngularMomentum());
 	}
 
 	// Integrate force -> acceleration -> velocity -> position.

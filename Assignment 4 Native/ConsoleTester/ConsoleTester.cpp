@@ -45,7 +45,7 @@ int main()
 	float deltaTime = step / 1000.0f;
 	while( true )
 	{
-		printf( "%d", IsPolygonColliding( polygon1 ) );
+		printf( "Colliding: %d\n", IsPolygonColliding( polygon1 ) );
 		PolygonRotate( polygon1, glm::radians<float>( 90.0f ) * deltaTime );
 		PolygonRotate( polygon2, glm::radians<float>( 90.0f ) * deltaTime );
 		_sleep( step );
