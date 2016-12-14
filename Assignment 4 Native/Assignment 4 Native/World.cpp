@@ -44,28 +44,7 @@ void World::Step( float deltaTimeSeconds )
 	// Collision resolution.
 	for( auto collision : __collisions )
 	{
-		Polygon* aPolygon = collision.facePolygon;
-		Polygon* bPolygon = collision.contactPolygon;
-
-		glm::vec2 relativeVelocity = bPolygon->GetVelocity() - aPolygon->GetVelocity();
-		float contactVelocity = glm::dot(relativeVelocity, collision.faceNormal);
-		//No need to continue if velocities are separating already
-		if (contactVelocity > 0)
-			break;
-
-		//Default restitution is 1.0f
-		//TODO add restitution to polygon
-		float restitution = 1.0f;
-
-		float impulseScalar = -(1.0f + restitution) * contactVelocity;
-		float invMassA = 1 / aPolygon->GetMass();
-		float invMassB = 1 / bPolygon->GetMass();
-		impulseScalar /= invMassA + invMassB;
-		glm::vec2 impulse = impulseScalar * collision.faceNormal;
-		
-		//aPolygon->SetVelocity(aPolygon->GetVelocity() - (invMassA * impulse));
-		bPolygon->SetVelocity(bPolygon->GetVelocity() + (invMassB * impulse));
-		bPolygon->Rotate(-collision.GetAngularMomentum());
+		CollisionResponse(collision.facePolygon, collision.contactPolygon, collision);		
 	}
 
 	// Integrate force -> acceleration -> velocity -> position.
@@ -146,6 +125,35 @@ bool World::TestSeparateAxisTheorem( Polygon* facePolygon, Polygon* vertexPolygo
 	return true;
 }
 
+void World::CollisionResponse(Polygon * aPolygon, Polygon * bPolygon, Collision collision)
+{
+
+	glm::vec2 relativeVelocity = bPolygon->GetVelocity() - aPolygon->GetVelocity(); // Get relative velocity between both polygons
+	float contactVelocity = glm::dot(relativeVelocity, collision.faceNormal); // Use dot product to get the contact velocity on the face normal
+	//No need to continue if velocities are separating already
+	if (contactVelocity > 0)
+		return;
+
+	//Default restitution is 1.0f
+	//TODO add restitution to polygon
+	float restitution = 1.0f;
+
+	float impulseScalar = -(1.0f + restitution) * contactVelocity;
+	float invMassA = 1 / aPolygon->GetMass();
+	float invMassB = 1 / bPolygon->GetMass();
+	impulseScalar /= invMassA + invMassB;
+	glm::vec2 impulse = impulseScalar * collision.faceNormal; // Impulse is the impulse scalar multiplied by the normal of the face polygon
+
+	if(!aPolygon->GetIsStatic()) // if polygon is not static then we react to the collision
+		aPolygon->SetVelocity(aPolygon->GetVelocity() - (invMassA * impulse)); // Add impulse velocity
+	if (!bPolygon->GetIsStatic()) 
+	{
+		bPolygon->SetVelocity(bPolygon->GetVelocity() + (invMassB * impulse));
+		bPolygon->SetRotationalVelocity(-collision.GetAngularMomentum());
+	}
+
+}
+
 
 
 // PUBLIC
@@ -183,10 +191,10 @@ void World::Update( float deltaTimeSeconds )
 
 // Create a new Polygon instance and store it in the __polygons map so we can look it up by its
 // handle later.
-POLYGON_HANDLE World::CreatePolygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation, float mass, bool useGravity )
+POLYGON_HANDLE World::CreatePolygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation, float mass, bool useGravity, bool isStatic )
 {
 	auto handle = GeneratePolygonHandle();
-	__polygons.emplace( handle, new Polygon( vertices, position, rotation, mass, useGravity ) );
+	__polygons.emplace( handle, new Polygon( vertices, position, rotation, mass, useGravity, isStatic ) );
 	return handle;
 }
 

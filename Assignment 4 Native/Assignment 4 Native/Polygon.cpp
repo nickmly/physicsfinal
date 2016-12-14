@@ -3,8 +3,7 @@
 #include "Face.h"
 
 // PRIVATE
-
-Polygon::Polygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation, float mass, bool useGravity )
+Polygon::Polygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation, float mass, bool useGravity, bool isStatic )
 	: __vertices( NULL )
 	, __position( position )
 	, __rotation( rotation )
@@ -12,6 +11,7 @@ Polygon::Polygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float ro
 	, __useGravity( useGravity )
 	, __globalVertices( std::vector<glm::vec2>() )
 	, __faces( std::vector<Face>() )
+	, __isStatic( isStatic )
 {
 	SetVertices( vertices );
 }
@@ -116,6 +116,16 @@ bool Polygon::GetUseGravity()
 void Polygon::SetUseGravity( bool useGravity )
 {
 	__useGravity = useGravity;
+}
+
+bool Polygon::GetIsStatic()
+{
+	return __isStatic;
+}
+
+void Polygon::SetIsStatic( bool isStatic )
+{
+	__isStatic = isStatic;
 }
 
 

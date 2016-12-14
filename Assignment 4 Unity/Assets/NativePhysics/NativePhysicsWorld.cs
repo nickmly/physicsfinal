@@ -59,7 +59,7 @@ namespace Humber.GAME205.NativePhysics
             }
         }
 
-        public int PolygonCreate( IEnumerable<Vector2> vertices, Vector2 position, float rotation = 0f, float mass = 1f, bool useGravity = false )
+        public int PolygonCreate( IEnumerable<Vector2> vertices, Vector2 position, float rotation = 0f, float mass = 1f, bool useGravity = false, bool isStatic = false)
         {
             ThrowExceptionIfNativeWorldDoesNotExist();
 
@@ -68,7 +68,7 @@ namespace Humber.GAME205.NativePhysics
             .Select( vertex => new TransportVector2( vertex ) )
             .ToArray();
 
-            return NativePhysics.PolygonCreate( transportVertices, transportVertices.Length, new TransportVector2( position ), rotation, mass, useGravity );
+            return NativePhysics.PolygonCreate( transportVertices, transportVertices.Length, new TransportVector2( position ), rotation, mass, useGravity, isStatic );
         }
         
         public void PolygonDestroy( int handle )
@@ -202,7 +202,7 @@ namespace Humber.GAME205.NativePhysics
             public extern static void WorldDestroy();
 
             [DllImport( DLL_NAME, CallingConvention = CallingConvention.Cdecl )]
-            public static extern int PolygonCreate( TransportVector2[] vertices, int verticesLength, TransportVector2 position, float rotation = 0f, float mass = 1f, bool useGravity = false );
+            public static extern int PolygonCreate( TransportVector2[] vertices, int verticesLength, TransportVector2 position, float rotation = 0f, float mass = 1f, bool useGravity = false, bool isStatic = false );
 
             [DllImport( DLL_NAME, CallingConvention = CallingConvention.Cdecl )]
             public extern static void PolygonDestroy( int handle );

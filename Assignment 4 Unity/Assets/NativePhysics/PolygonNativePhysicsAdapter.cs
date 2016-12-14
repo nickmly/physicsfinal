@@ -12,6 +12,7 @@ namespace Humber.GAME205.NativePhysics
 
         [Header( "Physics Properties" )]
         public bool useGravity = false;
+        public bool isStatic = false;
         public float mass = 1f;
 
         public float initialRotationalVelocity;
@@ -122,7 +123,7 @@ namespace Humber.GAME205.NativePhysics
             }
 
             // Create the C++ instance representing this polygon.
-            handle = World.PolygonCreate( Polygon.Vertices, Position, Rotation, mass, useGravity );
+            handle = World.PolygonCreate( Polygon.Vertices, Position, Rotation, mass, useGravity, isStatic );
 
             // Set up an event listener to update the native polygon's geometry whenever it changes in C#.
             Polygon.VerticesChanged.AddListener( () => {

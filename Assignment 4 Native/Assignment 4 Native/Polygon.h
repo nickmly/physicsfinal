@@ -14,6 +14,7 @@ class Polygon
 	std::vector<glm::vec2> __globalVertices;
 	std::vector<Face> __faces;
 	bool      __useGravity;
+	bool	  __isStatic;
 	float     __mass;
 	float     __rotationalInertia;
 	glm::vec2 __position;
@@ -21,7 +22,7 @@ class Polygon
 	float     __rotation;
 	float     __rotationalVelocity;
 
-	Polygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation = 0.0f, float mass = 1.0f, bool useGravity = false );
+	Polygon( std::vector<glm::vec2>* vertices, glm::vec2 position, float rotation = 0.0f, float mass = 1.0f, bool useGravity = false, bool isStatic = false );
 	~Polygon();
 
 	void UpdateCenterOfMass();
@@ -34,6 +35,9 @@ class Polygon
 
 	bool GetUseGravity();
 	void SetUseGravity( bool useGravity );
+
+	bool GetIsStatic();
+	void SetIsStatic( bool isStatic );
 
 	float GetMass();
 	void SetMass( float mass );
